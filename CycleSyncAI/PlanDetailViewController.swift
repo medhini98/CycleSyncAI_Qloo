@@ -143,7 +143,7 @@ class PlanDetailViewController: UIViewController {
         // 🟦 Container to hold the calendar (for show/hide cleanly)
         let calendarWrapper = UIView()
         calendarWrapper.translatesAutoresizingMaskIntoConstraints = false
-        calendarWrapper.isHidden = true
+        calendarWrapper.isHidden = dateOptions.count <= 1
         contentView.addSubview(calendarWrapper)
         self.calendarContainer = calendarWrapper  // save ref
         self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
@@ -155,6 +155,11 @@ class PlanDetailViewController: UIViewController {
         calendarPicker.translatesAutoresizingMaskIntoConstraints = false
         calendarPicker.addTarget(self, action: #selector(calendarDatePicked(_:)), for: .valueChanged)
         calendarWrapper.addSubview(calendarPicker)
+
+
+        let defaultHeight = calendarPicker.intrinsicContentSize.height
+        self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: dateOptions.count <= 1 ? 0 : defaultHeight)
+        self.calendarHeightConstraint?.isActive = true
 
         if let first = dateOptions.first,
            let last = dateOptions.last {

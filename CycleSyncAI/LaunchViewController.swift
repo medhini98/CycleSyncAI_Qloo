@@ -24,6 +24,44 @@ class LaunchViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.requestHealthPermission()
+        }
+    }
+
+    private func requestHealthPermission() {
+        if !UserDefaults.standard.bool(forKey: "healthPermissionAsked") {
+            HealthManager.shared.requestAuthorization { _, _ in
+                DispatchQueue.main.async {
+                    UserDefaults.standard.set(true, forKey: "healthPermissionAsked")
+                    self.requestNotificationPermission()
+                }
+            }
+        } else {
+            requestNotificationPermission()
+        }
+    }
+
+    private func requestNotificationPermission() {
+        if !UserDefaults.standard.bool(forKey: "notificationPermissionAsked") {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in
+                DispatchQueue.main.async {
+                    UserDefaults.standard.set(true, forKey: "notificationPermissionAsked")
+                    self.goToHome()
+                }
+            }
+        } else {
+            goToHome()
+        }
+    }
+
+    private func goToHome() {
+        let homepage = HomepageViewController()
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
+           let window = sceneDelegate.window {
+            window.rootViewController = homepage
+            window.makeKeyAndVisible()
+        } else {
+            self.present(homepage, animated: true)
             let homepage = HomepageViewController()
             if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
                let window = sceneDelegate.window {
