@@ -341,16 +341,6 @@ class WorkoutPlanViewController: UIViewController {
         let phaseList = Array(Set(days.map { $0.phase })).joined(separator: ", ")
         let cycleDay = sortedDays.first?.cycleDay ?? 1
         
-        let today = Date()
-        let isoFormatter = DateFormatter()
-        isoFormatter.dateFormat = "yyyy-MM-dd"
-        let todayStr = isoFormatter.string(from: today)
-        let firstPlanDateStr = UserDefaults.standard.string(forKey: "firstPlanDate") ?? todayStr
-        
-        let (x, N, P) = TrackerManager.shared.adherenceSummary(since: firstPlanDateStr, to: todayStr, planType: "workout")  // or "diet"
-
-        let adherenceNote = "The user has followed their diet plan for \(x)/\(N) days with an average adherence of \(Int(P * 100))%."
-
         let prompt: String
 
         if isDateRange {
@@ -382,9 +372,6 @@ class WorkoutPlanViewController: UIViewController {
             - Dietary restrictions: \(profile.dietaryRestrictions)
             - Menstrual phases (one of: \(phaseList))
             - Starting from cycle day \(cycleDay), increasing daily
-            - Adjust plan difficulty based on: \(adherenceNote):
-              • Low adherence → lighter workouts, shorter sessions, more encouragement.
-              • High adherence → more challenging, diverse routines with progression.
 
             For each day:
             - Specify the date, menstrual phase, and cycle day
@@ -482,9 +469,6 @@ class WorkoutPlanViewController: UIViewController {
             - Avoid any exercises harmful or exacerbating for \(profile.medicalConditions).
             - Respect all \(profile.dietaryRestrictions).
             - Avoid exercises that may worsen PMS or related symptoms during \(phase).
-            - Adjust plan difficulty based on: \(adherenceNote):
-              • Low adherence → lighter workouts, shorter sessions, more encouragement.
-              • High adherence → more challenging, diverse routines with progression.
             """
         }
 

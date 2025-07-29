@@ -394,11 +394,6 @@ class EatPlanViewController: UIViewController {
         let isoFormatter = DateFormatter()
         isoFormatter.dateFormat = "yyyy-MM-dd"
         let todayStr = isoFormatter.string(from: today)
-        let firstPlanDateStr = UserDefaults.standard.string(forKey: "firstPlanDate") ?? todayStr
-        
-        let (x, N, P) = TrackerManager.shared.adherenceSummary(since: firstPlanDateStr, to: todayStr, planType: "diet")  // or "workout"
-
-        let adherenceNote = "The user has followed their diet plan for \(x)/\(N) days with an average adherence of \(Int(P * 100))%."
 
         let prompt: String
 
@@ -433,7 +428,6 @@ class EatPlanViewController: UIViewController {
         - Menstrual phase (one of: \(phaseList))
         - Starting from cycle day \(cycleDay)
         - Meal preference: \(mealPreferenceField.text ?? "No preference")
-        - \(adherenceNote)
 
         <h2>Meal Structure Guidelines (Biology-Based)</h2>
         - Always include: Early Drink, Breakfast, Mid-Morning Snack, Lunch, Evening Snack, Dinner. For each item, clearly state the suggested time in the same table cell (e.g., @ 10:30 AM).
@@ -498,7 +492,6 @@ class EatPlanViewController: UIViewController {
                     - Avoid any foods harmful or exacerbating for \(profile.medicalConditions).
                     - Respect all \(profile.dietaryRestrictions).
                     - Avoid foods that may worsen PMS or related symptoms during \(phase).
-                    - Take into consideration: \(adherenceNote)
                     """
         }
 
