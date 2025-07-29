@@ -167,6 +167,7 @@ class PlanDetailViewController: UIViewController {
 
         self.calendarHeightConstraint?.isActive = true
 
+
         if let first = dateOptions.first,
            let last = dateOptions.last {
             let iso = DateFormatter()
@@ -481,6 +482,12 @@ class PlanDetailViewController: UIViewController {
         let showing = container.isHidden
         container.isHidden.toggle()
         calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0
+
+
+        let showing = container.isHidden
+        container.isHidden.toggle()
+        calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0
+
 
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
