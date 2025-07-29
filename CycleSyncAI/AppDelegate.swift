@@ -7,6 +7,8 @@
 
 import UIKit
 import HealthKit
+import UserNotifications
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -20,6 +22,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("HealthKit authorization success: \(success)")
             }
         }
+
+        // Request notification permissions on first launch
+        if !UserDefaults.standard.bool(forKey: "notificationPermissionAsked") {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                DispatchQueue.main.async {
+                    UserDefaults.standard.set(true, forKey: "notificationPermissionAsked")
+                    if let error = error {
+                        print("Notification authorization error: \(error.localizedDescription)")
+                    } else {
+                        print(granted ? "Notification permission granted" : "Notification permission denied")
+                    }
+                }
+            }
+        }
+
 
         return true
     }
