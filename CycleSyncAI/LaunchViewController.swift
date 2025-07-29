@@ -65,6 +65,7 @@ class LaunchViewController: UIViewController {
             self.present(homepage, animated: true)
 
 
+
             let homepage = HomepageViewController()
             if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
                let window = sceneDelegate.window {
@@ -73,6 +74,7 @@ class LaunchViewController: UIViewController {
             } else {
                 self.present(homepage, animated: true)
             }
+
 
         }
     }

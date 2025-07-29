@@ -159,6 +159,10 @@ class PlanDetailViewController: UIViewController {
 
         self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
 
+        self.calendarHeightConstraint?.isActive = true
+
+
+
 
 
         let defaultHeight = calendarPicker.intrinsicContentSize.height
@@ -166,7 +170,6 @@ class PlanDetailViewController: UIViewController {
 
 
         self.calendarHeightConstraint?.isActive = true
-
 
         if let first = dateOptions.first,
            let last = dateOptions.last {
@@ -470,6 +473,7 @@ class PlanDetailViewController: UIViewController {
         calendarHeightConstraint?.constant = targetHeight
 
 
+
         let showing = container.isHidden
         container.isHidden.toggle()
         // Intrinsic size can report zero before layout; use a safe default
@@ -487,6 +491,7 @@ class PlanDetailViewController: UIViewController {
         let showing = container.isHidden
         container.isHidden.toggle()
         calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0
+
 
 
         UIView.animate(withDuration: 0.3) {
