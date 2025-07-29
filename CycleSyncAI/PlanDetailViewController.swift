@@ -138,6 +138,7 @@ class PlanDetailViewController: UIViewController {
         self.dateButton.titleLabel?.font = UIFont(name: "Avenir", size: 16)
         self.dateButton.translatesAutoresizingMaskIntoConstraints = false
         self.dateButton.addTarget(self, action: #selector(toggleCalendar), for: .touchUpInside)
+        self.dateButton.isEnabled = dateOptions.count > 1
         contentView.addSubview(self.dateButton)
 
         // 🟦 Container to hold the calendar (for show/hide cleanly)
@@ -156,9 +157,11 @@ class PlanDetailViewController: UIViewController {
         calendarPicker.addTarget(self, action: #selector(calendarDatePicked(_:)), for: .valueChanged)
         calendarWrapper.addSubview(calendarPicker)
 
+        self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
 
         let defaultHeight = calendarPicker.intrinsicContentSize.height
         self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: dateOptions.count <= 1 ? 0 : defaultHeight)
+
         self.calendarHeightConstraint?.isActive = true
 
         if let first = dateOptions.first,
@@ -454,7 +457,10 @@ class PlanDetailViewController: UIViewController {
     }
     
     @objc func toggleCalendar() {
+        guard let container = calendarContainer, dateOptions.count > 1 else { return }
+
         guard let container = calendarContainer else { return }
+
         let showing = container.isHidden
         container.isHidden.toggle()
         calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0

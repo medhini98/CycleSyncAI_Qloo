@@ -14,6 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Nothing to do here yet; permissions are requested in LaunchViewController
+
         // Request HealthKit permissions on first launch
         HealthManager.shared.requestAuthorization { success, error in
             if let error = error {
