@@ -15,6 +15,8 @@ class PlanDetailViewController: UIViewController {
     var selectedDate: String = ""
     var dateOptions: [String] = []
     let completionProgress = UIProgressView(progressViewStyle: .default)
+    var calendarHeightConstraint: NSLayoutConstraint?
+    var mealMap: [String: [String: String]] = [:]
     
     init(plan: PlanModel) {
         self.plan = plan
@@ -35,6 +37,10 @@ class PlanDetailViewController: UIViewController {
 
         self.selectedDate = PlanDetailViewController.chooseDefaultDate(from: self.dateOptions)
         print("🔢 Date Options Extracted: \(self.dateOptions)")
+
+        if plan.type == "diet" {
+            self.mealMap = PlanDetailViewController.parseMeals(from: plan.content, dates: self.dateOptions)
+        }
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -132,6 +138,7 @@ class PlanDetailViewController: UIViewController {
         self.dateButton.titleLabel?.font = UIFont(name: "Avenir", size: 16)
         self.dateButton.translatesAutoresizingMaskIntoConstraints = false
         self.dateButton.addTarget(self, action: #selector(toggleCalendar), for: .touchUpInside)
+        self.dateButton.isEnabled = dateOptions.count > 1
         contentView.addSubview(self.dateButton)
 
         // 🟦 Container to hold the calendar (for show/hide cleanly)
@@ -147,6 +154,17 @@ class PlanDetailViewController: UIViewController {
         calendarPicker.translatesAutoresizingMaskIntoConstraints = false
         calendarPicker.addTarget(self, action: #selector(calendarDatePicked(_:)), for: .valueChanged)
         calendarWrapper.addSubview(calendarPicker)
+
+        self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
+        self.calendarHeightConstraint?.isActive = true
+
+        if let first = dateOptions.first,
+           let last = dateOptions.last {
+            let iso = DateFormatter()
+            iso.dateFormat = "yyyy-MM-dd"
+            calendarPicker.minimumDate = iso.date(from: first)
+            calendarPicker.maximumDate = iso.date(from: last)
+        }
 
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: anchor, constant: 10),
@@ -250,7 +268,11 @@ class PlanDetailViewController: UIViewController {
 
             for component in componentsToTrack {
                 let checkbox = UIButton(type: .system)
-                checkbox.setTitle(component, for: .normal)
+                if let meal = self.mealMap[self.selectedDate]?[component], !meal.isEmpty {
+                    checkbox.setTitle("\(component): \(meal)", for: .normal)
+                } else {
+                    checkbox.setTitle(component, for: .normal)
+                }
                 checkbox.contentHorizontalAlignment = .left
                 checkbox.titleLabel?.font = UIFont(name: "Avenir", size: 16)
                 checkbox.tintColor = UIColor(red: 0.663, green: 0.776, blue: 1.0, alpha: 1)
@@ -266,7 +288,7 @@ class PlanDetailViewController: UIViewController {
                     checkbox.setImage(UIImage(systemName: updated ? "checkmark.square" : "square"), for: .normal)
 
                     self.updateCompletionProgress()
-                    if TrackerManager.shared.isAllComplete(for: dateForCheckbox) {
+                    if TrackerManager.shared.isAllComplete(for: dateForCheckbox, planType: self.plan.type) {
                         self.showCompletionBanner(for: dateForCheckbox)
                     }
                 }, for: .touchUpInside)
@@ -327,6 +349,44 @@ class PlanDetailViewController: UIViewController {
                 banner.removeFromSuperview()
             }
         }
+    }
+
+    // MARK: - Meal Parsing
+
+    static func parseMeals(from html: String, dates: [String]) -> [String: [String: String]] {
+        var result: [String: [String: String]] = [:]
+
+        // Grab table rows
+        guard let rowRegex = try? NSRegularExpression(pattern: "<tr>(.*?)</tr>", options: [.dotMatchesLineSeparators]) else {
+            return result
+        }
+        let nsHtml = html as NSString
+        let rowMatches = rowRegex.matches(in: html, options: [], range: NSRange(location: 0, length: nsHtml.length))
+        var dateIndex = 0
+        for match in rowMatches.dropFirst() { // drop header
+            guard dateIndex < dates.count else { break }
+            let rowContent = nsHtml.substring(with: match.range(at: 1))
+            guard let cellRegex = try? NSRegularExpression(pattern: "<td[^>]*>(.*?)</td>", options: [.dotMatchesLineSeparators]) else { continue }
+            let cellMatches = cellRegex.matches(in: rowContent, options: [], range: NSRange(location: 0, length: (rowContent as NSString).length))
+            if cellMatches.count >= 9 {
+                var map: [String: String] = [:]
+                let labels = ["Morning Drink", "Breakfast", "Mid-Morning Snack", "Lunch", "Evening Snack", "Dinner"]
+                for (i,label) in labels.enumerated() {
+                    let idx = i + 3
+                    if idx < cellMatches.count {
+                        let cell = (rowContent as NSString).substring(with: cellMatches[idx].range(at: 1))
+                        map[label] = stripHTML(from: cell)
+                    }
+                }
+                result[dates[dateIndex]] = map
+            }
+            dateIndex += 1
+        }
+        return result
+    }
+
+    static func stripHTML(from string: String) -> String {
+        return string.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression, range: nil).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
 
@@ -391,9 +451,14 @@ class PlanDetailViewController: UIViewController {
     }
     
     @objc func toggleCalendar() {
-        guard let container = calendarContainer else { return }
+        guard let container = calendarContainer, dateOptions.count > 1 else { return }
+        let wasHidden = container.isHidden
+        container.isHidden.toggle()
+        // Intrinsic size can report zero before layout; use a safe default
+        let targetHeight = wasHidden ? max(calendarPicker.intrinsicContentSize.height, 320) : 0
+        calendarHeightConstraint?.constant = targetHeight
         UIView.animate(withDuration: 0.3) {
-            container.isHidden.toggle()
+            self.view.layoutIfNeeded()
         }
     }
     
