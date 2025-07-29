@@ -138,12 +138,13 @@ class PlanDetailViewController: UIViewController {
         self.dateButton.titleLabel?.font = UIFont(name: "Avenir", size: 16)
         self.dateButton.translatesAutoresizingMaskIntoConstraints = false
         self.dateButton.addTarget(self, action: #selector(toggleCalendar), for: .touchUpInside)
+        self.dateButton.isEnabled = dateOptions.count > 1
         contentView.addSubview(self.dateButton)
 
         // 🟦 Container to hold the calendar (for show/hide cleanly)
         let calendarWrapper = UIView()
         calendarWrapper.translatesAutoresizingMaskIntoConstraints = false
-        calendarWrapper.isHidden = true
+        calendarWrapper.isHidden = dateOptions.count <= 1
         contentView.addSubview(calendarWrapper)
         self.calendarContainer = calendarWrapper  // save ref
         self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
@@ -155,6 +156,17 @@ class PlanDetailViewController: UIViewController {
         calendarPicker.translatesAutoresizingMaskIntoConstraints = false
         calendarPicker.addTarget(self, action: #selector(calendarDatePicked(_:)), for: .valueChanged)
         calendarWrapper.addSubview(calendarPicker)
+
+        self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
+
+
+
+        let defaultHeight = calendarPicker.intrinsicContentSize.height
+        self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: dateOptions.count <= 1 ? 0 : defaultHeight)
+
+
+        self.calendarHeightConstraint?.isActive = true
+
 
         if let first = dateOptions.first,
            let last = dateOptions.last {
@@ -449,10 +461,34 @@ class PlanDetailViewController: UIViewController {
     }
     
     @objc func toggleCalendar() {
+        guard let container = calendarContainer, dateOptions.count > 1 else { return }
+
+        let wasHidden = container.isHidden
+        container.isHidden.toggle()
+        // Intrinsic size can report zero before layout; use a safe default
+        let targetHeight = wasHidden ? max(calendarPicker.intrinsicContentSize.height, 320) : 0
+        calendarHeightConstraint?.constant = targetHeight
+
+
+        let showing = container.isHidden
+        container.isHidden.toggle()
+        // Intrinsic size can report zero before layout; use a safe default
+        let targetHeight = showing ? max(calendarPicker.intrinsicContentSize.height, 320) : 0
+        calendarHeightConstraint?.constant = targetHeight
+
+
         guard let container = calendarContainer else { return }
+
         let showing = container.isHidden
         container.isHidden.toggle()
         calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0
+
+
+        let showing = container.isHidden
+        container.isHidden.toggle()
+        calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0
+
+
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
