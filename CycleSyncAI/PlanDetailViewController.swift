@@ -144,9 +144,11 @@ class PlanDetailViewController: UIViewController {
         // 🟦 Container to hold the calendar (for show/hide cleanly)
         let calendarWrapper = UIView()
         calendarWrapper.translatesAutoresizingMaskIntoConstraints = false
-        calendarWrapper.isHidden = true
+        calendarWrapper.isHidden = dateOptions.count <= 1
         contentView.addSubview(calendarWrapper)
         self.calendarContainer = calendarWrapper  // save ref
+        self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
+        self.calendarHeightConstraint?.isActive = true
 
         // 🟨 Add date picker inside wrapper
         calendarPicker.datePickerMode = .date
@@ -156,6 +158,11 @@ class PlanDetailViewController: UIViewController {
         calendarWrapper.addSubview(calendarPicker)
 
         self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
+
+
+        let defaultHeight = calendarPicker.intrinsicContentSize.height
+        self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: dateOptions.count <= 1 ? 0 : defaultHeight)
+
         self.calendarHeightConstraint?.isActive = true
 
         if let first = dateOptions.first,
@@ -452,11 +459,20 @@ class PlanDetailViewController: UIViewController {
     
     @objc func toggleCalendar() {
         guard let container = calendarContainer, dateOptions.count > 1 else { return }
+
         let showing = container.isHidden
         container.isHidden.toggle()
         // Intrinsic size can report zero before layout; use a safe default
         let targetHeight = showing ? max(calendarPicker.intrinsicContentSize.height, 320) : 0
         calendarHeightConstraint?.constant = targetHeight
+
+
+        guard let container = calendarContainer else { return }
+
+        let showing = container.isHidden
+        container.isHidden.toggle()
+        calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0
+
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
