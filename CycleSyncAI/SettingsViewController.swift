@@ -155,8 +155,8 @@ class SettingsViewController: UIViewController {
 
             if trimmedKey == "morningReminderEnabled" {
                 if toggle.isOn {
-                    let combinedFilenames = PlanHistoryManager.shared.getAllDateLabels()
-                    NotificationManager.shared.scheduleMorningReminderIfNeeded(filenames: combinedFilenames)
+                    let combinedDates = PlanHistoryManager.shared.getAllPlanDates()
+                    NotificationManager.shared.scheduleMorningReminderIfNeeded(dates: combinedDates)
                 } else {
                     NotificationManager.shared.cancelMorningReminder()
                 }
