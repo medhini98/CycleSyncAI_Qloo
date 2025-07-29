@@ -41,10 +41,15 @@ class TrackerManager {
         return data[date]?[component] ?? false
     }
 
-    func isAllComplete(for date: String) -> Bool {
-        let allComponents = dietComponents + workoutComponents + hydrationComponent
+    func isAllComplete(for date: String, planType: String) -> Bool {
+        let components: [String]
+        if planType == "diet" {
+            components = dietComponents + hydrationComponent
+        } else {
+            components = workoutComponents
+        }
         let dayData = loadTrackingData()[date] ?? [:]
-        for item in allComponents {
+        for item in components {
             if dayData[item] != true {
                 return false
             }
