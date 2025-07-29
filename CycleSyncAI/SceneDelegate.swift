@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
-        let rootVC = HomepageViewController()  // or whatever your home screen is
+        let rootVC = LaunchViewController()
         window?.rootViewController = rootVC
         window?.makeKeyAndVisible()
         

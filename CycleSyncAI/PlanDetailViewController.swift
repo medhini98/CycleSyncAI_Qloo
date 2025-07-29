@@ -156,6 +156,14 @@ class PlanDetailViewController: UIViewController {
         calendarPicker.addTarget(self, action: #selector(calendarDatePicked(_:)), for: .valueChanged)
         calendarWrapper.addSubview(calendarPicker)
 
+        if let first = dateOptions.first,
+           let last = dateOptions.last {
+            let iso = DateFormatter()
+            iso.dateFormat = "yyyy-MM-dd"
+            calendarPicker.minimumDate = iso.date(from: first)
+            calendarPicker.maximumDate = iso.date(from: last)
+        }
+
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: anchor, constant: 10),
             label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
@@ -278,7 +286,7 @@ class PlanDetailViewController: UIViewController {
                     checkbox.setImage(UIImage(systemName: updated ? "checkmark.square" : "square"), for: .normal)
 
                     self.updateCompletionProgress()
-                    if TrackerManager.shared.isAllComplete(for: dateForCheckbox) {
+                    if TrackerManager.shared.isAllComplete(for: dateForCheckbox, planType: self.plan.type) {
                         self.showCompletionBanner(for: dateForCheckbox)
                     }
                 }, for: .touchUpInside)
