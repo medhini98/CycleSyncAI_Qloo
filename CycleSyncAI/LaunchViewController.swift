@@ -62,6 +62,19 @@ class LaunchViewController: UIViewController {
             window.makeKeyAndVisible()
         } else {
             self.present(homepage, animated: true)
+
+
+
+            let homepage = HomepageViewController()
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
+               let window = sceneDelegate.window {
+                window.rootViewController = homepage
+                window.makeKeyAndVisible()
+            } else {
+                self.present(homepage, animated: true)
+            }
+
+
         }
     }
 }
