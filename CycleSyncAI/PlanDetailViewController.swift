@@ -467,39 +467,12 @@ class PlanDetailViewController: UIViewController {
     @objc func toggleCalendar() {
         guard let container = calendarContainer, dateOptions.count > 1 else { return }
 
-        let shouldShow = container.isHidden
-        container.isHidden = !shouldShow
-        // Intrinsic size can report zero before layout; use a safe default
-        let targetHeight = shouldShow ? max(calendarPicker.intrinsicContentSize.height, 320) : 0
-        calendarHeightConstraint?.constant = targetHeight
-
-
         let wasHidden = container.isHidden
         container.isHidden.toggle()
-        // Intrinsic size can report zero before layout; use a safe default
+
+        // Adjust height based on whether it is being shown or hidden
         let targetHeight = wasHidden ? max(calendarPicker.intrinsicContentSize.height, 320) : 0
         calendarHeightConstraint?.constant = targetHeight
-
-
-
-        let showing = container.isHidden
-        container.isHidden.toggle()
-        // Intrinsic size can report zero before layout; use a safe default
-        let targetHeight = showing ? max(calendarPicker.intrinsicContentSize.height, 320) : 0
-        calendarHeightConstraint?.constant = targetHeight
-
-
-        guard let container = calendarContainer else { return }
-
-        let showing = container.isHidden
-        container.isHidden.toggle()
-        calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0
-
-
-        let showing = container.isHidden
-        container.isHidden.toggle()
-        calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0
-
 
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
