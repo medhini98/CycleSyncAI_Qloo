@@ -9,6 +9,7 @@ import UIKit
 import HealthKit
 import UserNotifications
 
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -35,6 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+
 
         return true
     }
