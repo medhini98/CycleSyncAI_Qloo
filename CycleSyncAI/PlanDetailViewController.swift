@@ -159,6 +159,7 @@ class PlanDetailViewController: UIViewController {
 
         self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
 
+
         self.calendarHeightConstraint?.isActive = true
 
 
@@ -466,6 +467,13 @@ class PlanDetailViewController: UIViewController {
     @objc func toggleCalendar() {
         guard let container = calendarContainer, dateOptions.count > 1 else { return }
 
+        let shouldShow = container.isHidden
+        container.isHidden = !shouldShow
+        // Intrinsic size can report zero before layout; use a safe default
+        let targetHeight = shouldShow ? max(calendarPicker.intrinsicContentSize.height, 320) : 0
+        calendarHeightConstraint?.constant = targetHeight
+
+
         let wasHidden = container.isHidden
         container.isHidden.toggle()
         // Intrinsic size can report zero before layout; use a safe default
@@ -491,7 +499,6 @@ class PlanDetailViewController: UIViewController {
         let showing = container.isHidden
         container.isHidden.toggle()
         calendarHeightConstraint?.constant = showing ? calendarPicker.intrinsicContentSize.height : 0
-
 
 
         UIView.animate(withDuration: 0.3) {
