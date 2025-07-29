@@ -37,8 +37,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Morning reminder
         // ⏰ Schedule morning reminder (if needed)
-        let combinedFilenames = PlanHistoryManager.shared.getAllDateLabels()
-        NotificationManager.shared.scheduleMorningReminderIfNeeded(filenames: combinedFilenames)
+        let combinedDates = PlanHistoryManager.shared.getAllPlanDates()
+        NotificationManager.shared.scheduleMorningReminderIfNeeded(dates: combinedDates)
 
             // 🌀 Schedule phase change reminder (centralized logic)
         NotificationManager.shared.triggerPhaseReminderIfNeeded()
