@@ -146,6 +146,8 @@ class PlanDetailViewController: UIViewController {
         calendarWrapper.isHidden = dateOptions.count <= 1
         contentView.addSubview(calendarWrapper)
         self.calendarContainer = calendarWrapper  // save ref
+        self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: 0)
+        self.calendarHeightConstraint?.isActive = true
 
         // 🟨 Add date picker inside wrapper
         calendarPicker.datePickerMode = .date
@@ -153,6 +155,7 @@ class PlanDetailViewController: UIViewController {
         calendarPicker.translatesAutoresizingMaskIntoConstraints = false
         calendarPicker.addTarget(self, action: #selector(calendarDatePicked(_:)), for: .valueChanged)
         calendarWrapper.addSubview(calendarPicker)
+
 
         let defaultHeight = calendarPicker.intrinsicContentSize.height
         self.calendarHeightConstraint = calendarWrapper.heightAnchor.constraint(equalToConstant: dateOptions.count <= 1 ? 0 : defaultHeight)
