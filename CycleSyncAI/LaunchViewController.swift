@@ -24,6 +24,7 @@ class LaunchViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+          
             self.requestHealthPermission()
         }
     }
@@ -62,6 +63,18 @@ class LaunchViewController: UIViewController {
             window.makeKeyAndVisible()
         } else {
             self.present(homepage, animated: true)
+
+
+
+            let homepage = HomepageViewController()
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
+               let window = sceneDelegate.window {
+                window.rootViewController = homepage
+                window.makeKeyAndVisible()
+            } else {
+                self.present(homepage, animated: true)
+            }
+
         }
     }
 }
