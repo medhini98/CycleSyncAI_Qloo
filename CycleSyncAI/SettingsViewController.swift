@@ -19,8 +19,7 @@ class SettingsViewController: UIViewController {
     let options: [(key: String, title: String, subtitle: String)] = [
         ("morningReminderEnabled", "Morning Reminder", "Get a daily reminder to generate your plan."),
         ("phaseChangeEnabled", "Phase Change Alerts", "Notifies when your menstrual phase changes."),
-        ("hydrationEnabled", "Hydration Reminders", "Reminds you to drink water regularly."),
-        ("followUpEnabled", "Meal/Workout Follow-ups", "Prompts you to log your  meals/workouts.")
+        ("hydrationEnabled", "Hydration Reminders", "Reminds you to drink water regularly.")
     ]
 
     override func viewDidLoad() {
@@ -155,8 +154,8 @@ class SettingsViewController: UIViewController {
 
             if trimmedKey == "morningReminderEnabled" {
                 if toggle.isOn {
-                    let combinedFilenames = PlanHistoryManager.shared.getAllDateLabels()
-                    NotificationManager.shared.scheduleMorningReminderIfNeeded(filenames: combinedFilenames)
+                    let combinedDates = PlanHistoryManager.shared.getAllPlanDates()
+                    NotificationManager.shared.scheduleMorningReminderIfNeeded(dates: combinedDates)
                 } else {
                     NotificationManager.shared.cancelMorningReminder()
                 }

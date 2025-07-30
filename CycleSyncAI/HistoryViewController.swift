@@ -27,7 +27,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
         setupFilterButtons()
         
         let infoLabel = UILabel()
-        infoLabel.text = "📋 Tap a plan below to view & log your progress"
+        infoLabel.text = "📋 Tap a plan below to view the details"
         infoLabel.textAlignment = .center
         infoLabel.font = UIFont(name: "Avenir", size: 14)
         infoLabel.textColor = UIColor(red: 0.2, green: 0.25, blue: 0.35, alpha: 1)

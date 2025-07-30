@@ -11,7 +11,7 @@ class HomepageViewController: UIViewController {
     let eatButton = UIButton(type: .system)
     let moveButton = UIButton(type: .system)
     let historyButton = UIButton(type: .system)
-    let askCoachButton = UIButton(type: .system)
+    let curatedButton = UIButton(type: .system)
     let profileButton = UIButton(type: .system)
     let settingsButton = UIButton(type: .system)
     let buttonStack = UIStackView()
@@ -124,11 +124,11 @@ class HomepageViewController: UIViewController {
         ])
         historyButton.addTarget(self, action: #selector(goToHistory), for: .touchUpInside)
         
-        configureButton(askCoachButton, title: "Ask the AI Assistant 🤖", colors: [
+        configureButton(curatedButton, title: "Curated for You", colors: [
             UIColor(red: 224/255, green: 176/255, blue: 255/255, alpha: 1),
             UIColor(red: 195/255, green: 139/255, blue: 255/255, alpha: 1)
         ])
-        askCoachButton.addTarget(self, action: #selector(goToAskCoach), for: .touchUpInside)
+        curatedButton.addTarget(self, action: #selector(goToRecommendations), for: .touchUpInside)
 
         buttonStack.axis = .vertical
         buttonStack.spacing = 30
@@ -138,7 +138,7 @@ class HomepageViewController: UIViewController {
         buttonStack.addArrangedSubview(eatButton)
         buttonStack.addArrangedSubview(moveButton)
         buttonStack.addArrangedSubview(historyButton)
-        buttonStack.addArrangedSubview(askCoachButton)
+        buttonStack.addArrangedSubview(curatedButton)
 
         view.addSubview(buttonStack)
 
@@ -149,8 +149,8 @@ class HomepageViewController: UIViewController {
             moveButton.heightAnchor.constraint(equalToConstant: 60),
             historyButton.widthAnchor.constraint(equalToConstant: 280),
             historyButton.heightAnchor.constraint(equalToConstant: 60),
-            askCoachButton.widthAnchor.constraint(equalToConstant: 280),
-            askCoachButton.heightAnchor.constraint(equalToConstant: 60),
+            curatedButton.widthAnchor.constraint(equalToConstant: 280),
+            curatedButton.heightAnchor.constraint(equalToConstant: 60),
 
             buttonStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             buttonStack.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20)
@@ -379,10 +379,10 @@ class HomepageViewController: UIViewController {
         present(navController, animated: true, completion: nil)
     }
     
-    @objc func goToAskCoach() {
-        let askVC = AskPageViewController()
-        askVC.modalPresentationStyle = .fullScreen
-        present(askVC, animated: true, completion: nil)
+    @objc func goToRecommendations() {
+        let recVC = RecommendationsViewController()
+        recVC.modalPresentationStyle = .fullScreen
+        present(recVC, animated: true, completion: nil)
     }
 
     func navigateTo(viewController: UIViewController) {

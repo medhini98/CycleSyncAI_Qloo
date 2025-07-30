@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
-        let rootVC = HomepageViewController()  // or whatever your home screen is
+        let rootVC = LaunchViewController()
         window?.rootViewController = rootVC
         window?.makeKeyAndVisible()
         
@@ -27,7 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let defaults = UserDefaults.standard
         if !defaults.bool(forKey: "notificationDefaultsSet") {
             // Set all toggles ON by default (with defensive trimming)
-            ["morningReminderEnabled", "phaseChangeEnabled", "hydrationEnabled", "followUpEnabled"].forEach {
+            ["morningReminderEnabled", "phaseChangeEnabled", "hydrationEnabled"].forEach {
                 let trimmedKey = $0.trimmingCharacters(in: .whitespacesAndNewlines)
                 defaults.set(true, forKey: trimmedKey)
             }
@@ -37,16 +37,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Morning reminder
         // ⏰ Schedule morning reminder (if needed)
-        let combinedFilenames = PlanHistoryManager.shared.getAllDateLabels()
-        NotificationManager.shared.scheduleMorningReminderIfNeeded(filenames: combinedFilenames)
+        let combinedDates = PlanHistoryManager.shared.getAllPlanDates()
+        NotificationManager.shared.scheduleMorningReminderIfNeeded(dates: combinedDates)
 
             // 🌀 Schedule phase change reminder (centralized logic)
         NotificationManager.shared.triggerPhaseReminderIfNeeded()
-        
+
         // 💧 Schedule hydration reminders based on current phase (if enabled)
         scheduleHydrationIfNeeded()
-        
-        NotificationManager.shared.scheduleLogReminderNotification()
 
     }
 

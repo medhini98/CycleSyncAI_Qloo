@@ -14,14 +14,14 @@ class NotificationManager {
     private init() {} // prevent external initialization
 
     // Call this once at app launch or when toggles are updated
-    func scheduleMorningReminderIfNeeded(filenames: [String]) {
+    func scheduleMorningReminderIfNeeded(dates: [String]) {
         let isOn = UserDefaults.standard.bool(forKey: "morningReminderEnabled")
         guard isOn else {
             print("🚫 Morning Reminder is OFF")
             return
         }
 
-        if isTodayCoveredByPlans(filenames: filenames) {
+        if isTodayCoveredByPlans(dates: dates) {
             print("✅ [MorningReminder] Plan already exists for today — no notification needed.")
             return
         }
@@ -55,50 +55,12 @@ class NotificationManager {
         }
     }
     
-    func isTodayCoveredByPlans(filenames: [String]) -> Bool {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "d MMM"
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-
-            let today = Calendar.current.startOfDay(for: Date())
-
-            for name in filenames {
-                let trimmed = name.trimmingCharacters(in: .whitespaces)
-
-                // Case 1: Direct date match
-                if let date = formatter.date(from: trimmed),
-                   Calendar.current.isDate(date, inSameDayAs: today) {
-                    return true
-                }
-
-                // Case 2: Range match
-                if trimmed.contains("-") {
-                    let components = trimmed.components(separatedBy: "-")
-                    if components.count == 2 {
-                        let startDay = components[0].trimmingCharacters(in: .whitespaces)
-                        let endComponent = components[1].trimmingCharacters(in: .whitespaces)
-
-                        let month = endComponent.components(separatedBy: " ").last ?? ""
-                        let endDay = endComponent.components(separatedBy: " ").first ?? ""
-
-                        let startDateStr = "\(startDay) \(month)"
-                        let endDateStr = "\(endDay) \(month)"
-
-                        if let startDate = formatter.date(from: startDateStr),
-                           let endDate = formatter.date(from: endDateStr) {
-                            let normalizedStart = Calendar.current.startOfDay(for: startDate)
-                            let normalizedEnd = Calendar.current.startOfDay(for: endDate)
-
-                            if (normalizedStart...normalizedEnd).contains(today) {
-                                return true
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false
-        }
+    func isTodayCoveredByPlans(dates: [String]) -> Bool {
+        let isoFormatter = DateFormatter()
+        isoFormatter.dateFormat = "yyyy-MM-dd"
+        let todayStr = isoFormatter.string(from: Date())
+        return dates.contains { $0.trimmingCharacters(in: .whitespaces) == todayStr }
+    }
     
     func cancelMorningReminder() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["morningReminder"])
@@ -226,30 +188,6 @@ class NotificationManager {
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["hydration\(i)"])
         }
         print("🔕 Hydration reminders cancelled")
-    }
-    
-    
-    func scheduleLogReminderNotification() {
-        let center = UNUserNotificationCenter.current()
-        let content = UNMutableNotificationContent()
-        content.title = "📝 Log your day"
-        content.body = "Don't forget to check off your meals, workout, and hydration goals!"
-        content.sound = .default
-
-        var dateComponents = DateComponents()
-        dateComponents.hour = 22
-        dateComponents.minute = 30
-
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        let request = UNNotificationRequest(identifier: "logReminder", content: content, trigger: trigger)
-
-        center.add(request) { error in
-            if let error = error {
-                print("❌ Failed to schedule log reminder: \(error.localizedDescription)")
-            } else {
-                print("✅ Scheduled log reminder at 10:30 PM")
-            }
-        }
     }
 
 }
