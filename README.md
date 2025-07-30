@@ -82,8 +82,4 @@ See demo video in the Devpost submission.
 ---
 
 ## Repository Access
-This is a private repository. Access has been granted to:
-- james.liounis@perplexity.ai
-- sathvik@perplexity.ai
-- devrel@perplexity.ai
-- testing@devpost.com
+This is a public repository, created for the purpose of the Qloo hackathon.
