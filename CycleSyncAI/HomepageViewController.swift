@@ -46,7 +46,7 @@ class HomepageViewController: UIViewController {
 
     func setupSplashLabel() {
         splashLabel.translatesAutoresizingMaskIntoConstraints = false
-        splashLabel.text = "Eat. Move. Thrive. With your Cycle.\nPowered by Perplexity’s Sonar."
+        splashLabel.text = "Eat. Move. Thrive. \nWith your Cycle."
         splashLabel.numberOfLines = 2
         splashLabel.textAlignment = .center
         splashLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
