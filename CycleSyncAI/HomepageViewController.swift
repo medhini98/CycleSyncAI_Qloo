@@ -333,6 +333,8 @@ class HomepageViewController: UIViewController {
                 country: defaults.string(forKey: "country") ?? "",
                 medicalConditions: (defaults.array(forKey: "medical") as? [String])?.joined(separator: ", ") ?? "",
                 dietaryRestrictions: (defaults.array(forKey: "dietary") as? [String])?.joined(separator: ", ") ?? "",
+                preferredCuisines: (defaults.array(forKey: "preferredCuisines") as? [String])?.joined(separator: ", ") ?? "",
+                preferredMusicGenres: (defaults.array(forKey: "preferredMusicGenres") as? [String])?.joined(separator: ", ") ?? "",
                 goal: defaults.string(forKey: "goal") ?? "",
                 activityLevel: defaults.string(forKey: "activity") ?? ""
             )
@@ -359,6 +361,8 @@ class HomepageViewController: UIViewController {
                 country: defaults.string(forKey: "country") ?? "",
                 medicalConditions: (defaults.array(forKey: "medical") as? [String])?.joined(separator: ", ") ?? "",
                 dietaryRestrictions: (defaults.array(forKey: "dietary") as? [String])?.joined(separator: ", ") ?? "",
+                preferredCuisines: (defaults.array(forKey: "preferredCuisines") as? [String])?.joined(separator: ", ") ?? "",
+                preferredMusicGenres: (defaults.array(forKey: "preferredMusicGenres") as? [String])?.joined(separator: ", ") ?? "",
                 goal: defaults.string(forKey: "goal") ?? "",
                 activityLevel: defaults.string(forKey: "activity") ?? ""
             )
