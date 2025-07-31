@@ -1,8 +1,9 @@
 import UIKit
+import WebKit
 
 class CuratedForYouViewController: UIViewController {
     let backButton = UIButton(type: .system)
-    let textView = UITextView()
+    let webView = WKWebView()
     let containerView = UIView()
     let spinner = UIActivityIndicatorView(style: .medium)
     let loadingLabel = UILabel()
@@ -12,7 +13,7 @@ class CuratedForYouViewController: UIViewController {
         super.viewDidLoad()
         setupGradientBackground()
         setupBackButton()
-        setupTextView()
+        setupWebView()
         loadRecommendations()
     }
 
@@ -65,7 +66,7 @@ class CuratedForYouViewController: UIViewController {
         ])
     }
 
-    func setupTextView() {
+    func setupWebView() {
         containerView.backgroundColor = UIColor.white.withAlphaComponent(0.8)
         containerView.layer.cornerRadius = 16
         containerView.layer.shadowColor = UIColor.black.cgColor
@@ -75,11 +76,10 @@ class CuratedForYouViewController: UIViewController {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(containerView)
 
-        textView.isEditable = false
-        textView.backgroundColor = .clear
-        textView.textContainerInset = UIEdgeInsets(top: 20, left: 16, bottom: 20, right: 16)
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(textView)
+        webView.backgroundColor = .clear
+        webView.scrollView.isScrollEnabled = true
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(webView)
 
         loadingLabel.text = "Gathering tailored suggestions..."
         loadingLabel.font = UIFont(name: "Avenir", size: 18)
@@ -96,10 +96,10 @@ class CuratedForYouViewController: UIViewController {
             containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
 
-            textView.topAnchor.constraint(equalTo: containerView.topAnchor),
-            textView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            textView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            textView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            webView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
+            webView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            webView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
+            webView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12),
 
             loadingLabel.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             loadingLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20),
@@ -120,6 +120,8 @@ class CuratedForYouViewController: UIViewController {
             country: defaults.string(forKey: "country") ?? "USA",
             medicalConditions: (defaults.array(forKey: "medical") as? [String])?.joined(separator: ", ") ?? "",
             dietaryRestrictions: (defaults.array(forKey: "dietary") as? [String])?.joined(separator: ", ") ?? "",
+            preferredCuisines: (defaults.array(forKey: "preferredCuisines") as? [String])?.joined(separator: ", ") ?? "",
+            preferredMusicGenres: (defaults.array(forKey: "preferredMusicGenres") as? [String])?.joined(separator: ", ") ?? "",
             goal: defaults.string(forKey: "goal") ?? "",
             activityLevel: defaults.string(forKey: "activity") ?? ""
         )
@@ -150,45 +152,41 @@ class CuratedForYouViewController: UIViewController {
         let cuisineStr = qloo.cuisines.joined(separator: ", ")
         let musicStr = qloo.music.joined(separator: ", ")
         let tasteSummary = [qloo.movies.joined(separator: ", "), qloo.books.joined(separator: ", ")].joined(separator: ", ")
+        let formatting = """
+Generate a complete, formatted HTML document. Answers should be direct and to the point.
+
+- Use <h2> for section headings.
+- Use <b> for important terms.
+- Use <ul><li> lists for bullet points.
+- Use <p> to separate paragraphs.
+"""
+
         return """
+\(formatting)
+
+User details:
+- Age group: \(profile.ageGroup)
+- Height: \(profile.height)
+- Weight: \(profile.weight)
+- Country: \(profile.country)
+- Medical Conditions: \(profile.medicalConditions)
+- Dietary Restrictions: \(profile.dietaryRestrictions)
+- Activity Level: \(profile.activityLevel)
+- Preferred Cuisines: \(profile.preferredCuisines)
+- Preferred Music Genres: \(profile.preferredMusicGenres)
+
 1. 🍽️ Taste-Inspired Meals
-Based on the user’s current menstrual phase (\(phase)) and preferred cuisines (\(cuisineStr)), suggest 3 culturally relevant meal options. These should be healthy, aligned with menstrual needs during the \(phase) phase, and rooted in \(profile.country).
+Based on the user’s current menstrual phase (\(phase)) and preferred cuisines (\(cuisineStr)), suggest 3 culturally relevant meal options that align with \(phase) needs and the user’s locale.
 
 2. 🎵 Move with Rhythm
-Suggest 2 culturally relevant workout styles or routines inspired by the user’s location (\(profile.country)), music taste (\(musicStr)), and fitness level (\(profile.activityLevel)). Include suggested music or playlist genres if applicable.
+Recommend 2 workout styles inspired by \(profile.country) culture and the user’s music taste (\(musicStr)). Tailor to activity level \(profile.activityLevel).
 
 3. 📚 Mood Boosters for This Phase
-The user is currently in the \(phase) phase. Based on this, recommend 1 book, 1 movie, and 1 music genre to uplift the user’s mood. Base this on Qloo’s cultural insights about user’s tastes (\(tasteSummary)), and make it phase-appropriate.
+The user is currently in the \(phase) phase. Suggest 1 book, 1 movie and 1 music genre to uplift their mood, leveraging Qloo insights (\(tasteSummary)).
 
 4. ✈️ Places & Plates to Explore
-Based on the user’s taste in food, activities, and music (\(cuisineStr), \(musicStr)), suggest one restaurant (in \(profile.country)) and one future travel destination. Tie them to the user’s menstrual wellness theme if possible (e.g., relaxation, rejuvenation).
+Given the tastes above (\(cuisineStr), \(musicStr)), suggest a restaurant in \(profile.country) and a future travel destination tied to menstrual wellness.
 """
-    }
-
-    func formattedText(from content: String) -> NSAttributedString {
-        let sections = content.components(separatedBy: "\n\n")
-        let attributed = NSMutableAttributedString()
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.lineSpacing = 4
-        for section in sections {
-            let parts = section.components(separatedBy: "\n")
-            if let heading = parts.first {
-                let headingAttr = NSAttributedString(string: heading + "\n", attributes: [
-                    .font: UIFont(name: "Avenir-Heavy", size: 18)!,
-                    .paragraphStyle: paragraph
-                ])
-                attributed.append(headingAttr)
-                let body = parts.dropFirst().joined(separator: "\n")
-                if !body.isEmpty {
-                    let bodyAttr = NSAttributedString(string: body + "\n\n", attributes: [
-                        .font: UIFont(name: "Avenir", size: 16)!,
-                        .paragraphStyle: paragraph
-                    ])
-                    attributed.append(bodyAttr)
-                }
-            }
-        }
-        return attributed
     }
 
     func callLLM(prompt: String) {
@@ -217,7 +215,7 @@ Based on the user’s taste in food, activities, and music (\(cuisineStr), \(mus
                 content = content.replacingOccurrences(of: "```html", with: "").replacingOccurrences(of: "```", with: "")
             }
             DispatchQueue.main.async {
-                self.textView.attributedText = self.formattedText(from: content)
+                self.webView.loadHTMLString(content, baseURL: nil)
             }
         }.resume()
     }

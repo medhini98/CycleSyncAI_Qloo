@@ -30,6 +30,14 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     let dietaryNoneButton = UIButton(type: .system)
     let medicalOtherField = UITextField()
     let dietaryOtherField = UITextField()
+    let cuisineLabel = UILabel()
+    let cuisineOtherButton = UIButton(type: .system)
+    let cuisineNoneButton = UIButton(type: .system)
+    let cuisineOtherField = UITextField()
+    let musicLabel = UILabel()
+    let musicOtherButton = UIButton(type: .system)
+    let musicNoneButton = UIButton(type: .system)
+    let musicOtherField = UITextField()
     let goalLabel = UILabel()
     let activityLabel = UILabel()
     let saveButton = UIButton(type: .system)
@@ -42,6 +50,8 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     let ageBuckets = ["Below 18", "18–30", "31–40", "41–50", "51+"]
     let medicalOptions = ["Diabetes", "PCOS", "Thyroid", "Hypertension", "Cardiovascular"]
     let dietaryOptions = ["Vegetarian", "Vegan", "Pescatarian", "Gluten-free", "Dairy-free", "Nut-free", "Keto", "Paleo"]
+    let cuisineOptions = ["Indian", "Italian", "Mexican", "Japanese", "Mediterranean", "Thai", "American", "Chinese"]
+    let musicOptions = ["Pop", "Rock", "Hip-Hop", "Jazz", "Classical", "EDM", "R&B", "Folk", "Ambient"]
     let goalOptions = ["Weight loss", "Weight gain", "Maintenance", "Improve endurance", "Build muscle", "Improve flexibility"]
     let activityOptions = ["No activity", "1–2 times a week", "3–4 times a week", "5+ times a week"]
     
@@ -49,6 +59,8 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
 
     var medicalButtons: [UIButton] = []
     var dietaryButtons: [UIButton] = []
+    var cuisineButtons: [UIButton] = []
+    var musicButtons: [UIButton] = []
     var goalButtons: [UIButton] = []
     var selectedGoals: [String] = []
     var activityButtons: [UIButton] = []
@@ -65,6 +77,8 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         setupMedicalAndDietarySections()
         setupGoalSection()
         setupActivitySection()
+        setupCuisineSection()
+        setupMusicSection()
         setupActionButtons()
         loadProfile()
         
@@ -73,7 +87,7 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide),
                                                name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        let textFields = [heightCmField, heightFtField, heightInField, weightField, medicalOtherField, dietaryOtherField]
+        let textFields = [heightCmField, heightFtField, heightInField, weightField, medicalOtherField, dietaryOtherField, cuisineOtherField, musicOtherField]
             for field in textFields {
                 field.layer.cornerRadius = 10
                 field.layer.masksToBounds = true
@@ -231,6 +245,14 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
             dietaryNoneButton.isSelected = false
             dietaryNoneButton.backgroundColor = unselectedColor
         }
+        if cuisineButtons.contains(sender) {
+            cuisineNoneButton.isSelected = false
+            cuisineNoneButton.backgroundColor = unselectedColor
+        }
+        if musicButtons.contains(sender) {
+            musicNoneButton.isSelected = false
+            musicNoneButton.backgroundColor = unselectedColor
+        }
 
         if sender.isSelected {
             sender.isSelected = false
@@ -248,6 +270,14 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     
     @objc func toggleDietaryOtherField() {
         dietaryOtherField.isHidden.toggle()
+    }
+
+    @objc func toggleCuisineOtherField() {
+        cuisineOtherField.isHidden.toggle()
+    }
+
+    @objc func toggleMusicOtherField() {
+        musicOtherField.isHidden.toggle()
     }
     
     @objc func clearMedicalSelections() {
@@ -270,6 +300,28 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         dietaryNoneButton.backgroundColor = selectedColor
         dietaryOtherField.text = ""
         dietaryOtherField.isHidden = true
+    }
+
+    @objc func clearCuisineSelections() {
+        for button in cuisineButtons {
+            button.isSelected = false
+            button.backgroundColor = unselectedColor
+        }
+        cuisineNoneButton.isSelected = true
+        cuisineNoneButton.backgroundColor = selectedColor
+        cuisineOtherField.text = ""
+        cuisineOtherField.isHidden = true
+    }
+
+    @objc func clearMusicSelections() {
+        for button in musicButtons {
+            button.isSelected = false
+            button.backgroundColor = unselectedColor
+        }
+        musicNoneButton.isSelected = true
+        musicNoneButton.backgroundColor = selectedColor
+        musicOtherField.text = ""
+        musicOtherField.isHidden = true
     }
     
     @objc func handleGoalButtonTapped(_ sender: UIButton) {
@@ -352,6 +404,22 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
             selectedDietary = ["None"]
         }
 
+        var selectedCuisines = cuisineButtons.filter { $0.isSelected }.map { $0.title(for: .normal) ?? "" }
+        if !cuisineOtherField.isHidden, !cuisineOtherField.text!.isEmpty {
+            selectedCuisines.append(cuisineOtherField.text!)
+        }
+        if cuisineNoneButton.isSelected {
+            selectedCuisines = ["None"]
+        }
+
+        var selectedMusic = musicButtons.filter { $0.isSelected }.map { $0.title(for: .normal) ?? "" }
+        if !musicOtherField.isHidden, !musicOtherField.text!.isEmpty {
+            selectedMusic.append(musicOtherField.text!)
+        }
+        if musicNoneButton.isSelected {
+            selectedMusic = ["None"]
+        }
+
         let selectedGoal = goalButtons.filter { $0.isSelected }.map { $0.title(for: .normal) ?? "" }
         let selectedActivity = activityButtons.first(where: { $0.isSelected })?.title(for: .normal) ?? "None"
         
@@ -362,6 +430,8 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         print("Weight: \(weight)")
         print("Medical: \(selectedMedical)")
         print("Dietary: \(selectedDietary)")
+        print("Preferred Cuisines: \(selectedCuisines)")
+        print("Preferred Music: \(selectedMusic)")
         print("Goal: \(selectedGoal)")
         print("Activity Level: \(selectedActivity)")
         
@@ -378,6 +448,10 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         userDefaults.set(selectedDietary, forKey: "dietary")
         userDefaults.set(medicalOtherField.text ?? "", forKey: "medicalOther")
         userDefaults.set(dietaryOtherField.text ?? "", forKey: "dietaryOther")
+        userDefaults.set(selectedCuisines, forKey: "preferredCuisines")
+        userDefaults.set(selectedMusic, forKey: "preferredMusicGenres")
+        userDefaults.set(cuisineOtherField.text ?? "", forKey: "otherCuisine")
+        userDefaults.set(musicOtherField.text ?? "", forKey: "otherMusicGenre")
         userDefaults.set(selectedGoal, forKey: "selectedGoals")
         userDefaults.set(selectedActivity, forKey: "activity")
     }
@@ -392,6 +466,8 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         agePicker.selectRow(0, inComponent: 0, animated: true)
         clearMedicalSelections()
         clearDietarySelections()
+        clearCuisineSelections()
+        clearMusicSelections()
         
         for button in medicalButtons {
             button.isSelected = false
@@ -406,6 +482,20 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         }
         dietaryNoneButton.isSelected = false
         dietaryNoneButton.backgroundColor = unselectedColor
+
+        for button in cuisineButtons {
+            button.isSelected = false
+            button.backgroundColor = unselectedColor
+        }
+        cuisineNoneButton.isSelected = false
+        cuisineNoneButton.backgroundColor = unselectedColor
+
+        for button in musicButtons {
+            button.isSelected = false
+            button.backgroundColor = unselectedColor
+        }
+        musicNoneButton.isSelected = false
+        musicNoneButton.backgroundColor = unselectedColor
 
         for button in goalButtons {
             button.isSelected = false
@@ -426,6 +516,10 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         userDefaults.removeObject(forKey: "dietary")
         userDefaults.removeObject(forKey: "medicalOther")
         userDefaults.removeObject(forKey: "dietaryOther")
+        userDefaults.removeObject(forKey: "preferredCuisines")
+        userDefaults.removeObject(forKey: "preferredMusicGenres")
+        userDefaults.removeObject(forKey: "otherCuisine")
+        userDefaults.removeObject(forKey: "otherMusicGenre")
         userDefaults.removeObject(forKey: "selectedGoals")
         userDefaults.removeObject(forKey: "activity")
         
@@ -858,6 +952,140 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
             activityButtons.append(button)
         }
     }
+
+    func setupCuisineSection() {
+        cuisineLabel.text = "Preferred Cuisines"
+        styleLabel(cuisineLabel, size: 20, heavy: true)
+        cuisineLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(cuisineLabel)
+
+        NSLayoutConstraint.activate([
+            cuisineLabel.topAnchor.constraint(equalTo: activityButtons.last?.bottomAnchor ?? activityLabel.bottomAnchor, constant: 30),
+            cuisineLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20)
+        ])
+
+        cuisineNoneButton.setTitle("None", for: .normal)
+        styleSelectableButton(cuisineNoneButton)
+        cuisineNoneButton.addTarget(self, action: #selector(clearCuisineSelections), for: .touchUpInside)
+        contentView.addSubview(cuisineNoneButton)
+        cuisineNoneButton.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            cuisineNoneButton.topAnchor.constraint(equalTo: cuisineLabel.bottomAnchor, constant: 10),
+            cuisineNoneButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            cuisineNoneButton.widthAnchor.constraint(equalToConstant: 150),
+            cuisineNoneButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
+
+        var previousCuisineButton: UIButton? = cuisineNoneButton
+        for option in cuisineOptions {
+            let button = UIButton(type: .custom)
+            button.setTitle(option, for: .normal)
+            styleSelectableButton(button)
+            button.addTarget(self, action: #selector(toggleButtonSelection(_:)), for: .touchUpInside)
+            contentView.addSubview(button)
+            button.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                button.topAnchor.constraint(equalTo: previousCuisineButton?.bottomAnchor ?? cuisineLabel.bottomAnchor, constant: 10),
+                button.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+                button.widthAnchor.constraint(equalToConstant: 150),
+                button.heightAnchor.constraint(equalToConstant: 40)
+            ])
+            previousCuisineButton = button
+            cuisineButtons.append(button)
+        }
+
+        cuisineOtherButton.setTitle("Other", for: .normal)
+        styleSelectableButton(cuisineOtherButton)
+        cuisineOtherButton.addTarget(self, action: #selector(toggleCuisineOtherField), for: .touchUpInside)
+        contentView.addSubview(cuisineOtherButton)
+
+        cuisineOtherField.placeholder = "Specify other cuisine"
+        styleTextField(cuisineOtherField)
+        cuisineOtherField.isHidden = true
+        contentView.addSubview(cuisineOtherField)
+
+        cuisineOtherButton.translatesAutoresizingMaskIntoConstraints = false
+        cuisineOtherField.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            cuisineOtherButton.topAnchor.constraint(equalTo: previousCuisineButton?.bottomAnchor ?? cuisineLabel.bottomAnchor, constant: 10),
+            cuisineOtherButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            cuisineOtherButton.widthAnchor.constraint(equalToConstant: 150),
+            cuisineOtherButton.heightAnchor.constraint(equalToConstant: 40),
+
+            cuisineOtherField.topAnchor.constraint(equalTo: cuisineOtherButton.bottomAnchor, constant: 10),
+            cuisineOtherField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            cuisineOtherField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20)
+        ])
+    }
+
+    func setupMusicSection() {
+        musicLabel.text = "Preferred Music Genres"
+        styleLabel(musicLabel, size: 20, heavy: true)
+        musicLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(musicLabel)
+
+        NSLayoutConstraint.activate([
+            musicLabel.topAnchor.constraint(equalTo: cuisineOtherField.bottomAnchor, constant: 30),
+            musicLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20)
+        ])
+
+        musicNoneButton.setTitle("None", for: .normal)
+        styleSelectableButton(musicNoneButton)
+        musicNoneButton.addTarget(self, action: #selector(clearMusicSelections), for: .touchUpInside)
+        contentView.addSubview(musicNoneButton)
+        musicNoneButton.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            musicNoneButton.topAnchor.constraint(equalTo: musicLabel.bottomAnchor, constant: 10),
+            musicNoneButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            musicNoneButton.widthAnchor.constraint(equalToConstant: 150),
+            musicNoneButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
+
+        var previousMusicButton: UIButton? = musicNoneButton
+        for option in musicOptions {
+            let button = UIButton(type: .custom)
+            button.setTitle(option, for: .normal)
+            styleSelectableButton(button)
+            button.addTarget(self, action: #selector(toggleButtonSelection(_:)), for: .touchUpInside)
+            contentView.addSubview(button)
+            button.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                button.topAnchor.constraint(equalTo: previousMusicButton?.bottomAnchor ?? musicLabel.bottomAnchor, constant: 10),
+                button.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+                button.widthAnchor.constraint(equalToConstant: 150),
+                button.heightAnchor.constraint(equalToConstant: 40)
+            ])
+            previousMusicButton = button
+            musicButtons.append(button)
+        }
+
+        musicOtherButton.setTitle("Other", for: .normal)
+        styleSelectableButton(musicOtherButton)
+        musicOtherButton.addTarget(self, action: #selector(toggleMusicOtherField), for: .touchUpInside)
+        contentView.addSubview(musicOtherButton)
+
+        musicOtherField.placeholder = "Specify other genre"
+        styleTextField(musicOtherField)
+        musicOtherField.isHidden = true
+        contentView.addSubview(musicOtherField)
+
+        musicOtherButton.translatesAutoresizingMaskIntoConstraints = false
+        musicOtherField.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            musicOtherButton.topAnchor.constraint(equalTo: previousMusicButton?.bottomAnchor ?? musicLabel.bottomAnchor, constant: 10),
+            musicOtherButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            musicOtherButton.widthAnchor.constraint(equalToConstant: 150),
+            musicOtherButton.heightAnchor.constraint(equalToConstant: 40),
+
+            musicOtherField.topAnchor.constraint(equalTo: musicOtherButton.bottomAnchor, constant: 10),
+            musicOtherField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            musicOtherField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20)
+        ])
+    }
     
     func setupActionButtons() {
         saveButton.setTitle("Save", for: .normal)
@@ -885,7 +1113,7 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
 
         // Stack the buttons horizontally
         NSLayoutConstraint.activate([
-            saveButton.topAnchor.constraint(equalTo: activityButtons.last?.bottomAnchor ?? activityLabel.bottomAnchor, constant: 40),
+            saveButton.topAnchor.constraint(equalTo: musicOtherField.bottomAnchor, constant: 40),
             saveButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             saveButton.widthAnchor.constraint(equalToConstant: 100),
             saveButton.heightAnchor.constraint(equalToConstant: 44),
@@ -966,6 +1194,32 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
             }
         }
 
+        if let savedCuisines = userDefaults.array(forKey: "preferredCuisines") as? [String] {
+            for button in cuisineButtons {
+                if savedCuisines.contains(button.title(for: .normal) ?? "") {
+                    button.isSelected = true
+                    button.backgroundColor = selectedColor
+                }
+            }
+            if savedCuisines.contains("None") {
+                cuisineNoneButton.isSelected = true
+                cuisineNoneButton.backgroundColor = selectedColor
+            }
+        }
+
+        if let savedMusic = userDefaults.array(forKey: "preferredMusicGenres") as? [String] {
+            for button in musicButtons {
+                if savedMusic.contains(button.title(for: .normal) ?? "") {
+                    button.isSelected = true
+                    button.backgroundColor = selectedColor
+                }
+            }
+            if savedMusic.contains("None") {
+                musicNoneButton.isSelected = true
+                musicNoneButton.backgroundColor = selectedColor
+            }
+        }
+
         if let savedGoals = userDefaults.array(forKey: "selectedGoals") as? [String] {
             for button in goalButtons {
                 if savedGoals.contains(button.title(for: .normal) ?? "") {
@@ -988,6 +1242,8 @@ class UserProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         // Load 'Other' fields
         medicalOtherField.text = userDefaults.string(forKey: "medicalOther")
         dietaryOtherField.text = userDefaults.string(forKey: "dietaryOther")
+        cuisineOtherField.text = userDefaults.string(forKey: "otherCuisine")
+        musicOtherField.text = userDefaults.string(forKey: "otherMusicGenre")
     }
     
     deinit {
