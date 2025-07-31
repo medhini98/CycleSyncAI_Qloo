@@ -1,85 +1,137 @@
 # CycleSyncAI
 
 ## Overview
-CycleSyncAI is an iOS app designed to provide personalized diet and workout recommendations tailored to a woman’s menstrual cycle phase. By integrating menstrual cycle data from the iOS Health app and optional user profile details (age, height, weight, medical conditions, dietary restrictions, fitness goals, activity level, and meal preferences), the app delivers expert-informed, dynamic plans that support better health, fitness, and wellness outcomes.
 
-Unlike typical static wellness apps, CycleSyncAI integrates a large language model (LLM) through Perplexity’s Sonar Pro API to generate fully personalized recommendations, a daily grocery list, and motivational guidance in real time.
+CycleSyncAI is a native iOS app that delivers personalized, cycle-aware diet and fitness plans, along with a ready-to-use grocery list — to help women align their wellness routines with their body’s natural rhythms.
+
+It integrates:
+- Menstrual cycle data from Apple HealthKit  
+- User profile inputs (age, weight, height, dietary restrictions, medical conditions, fitness goals, activity level, and meal preferences)  
+- Perplexity’s Sonar Pro API to generate evidence-informed diet and workout plans  
+- Qloo’s Taste AI™ API to provide culturally relevant wellness recommendations based on user behavior and taste
+
+The result is a highly adaptive health assistant that merges biological, behavioral, and cultural context into one personalized wellness experience.
 
 ---
 
 ## Problem Statement
-Women’s nutritional and fitness needs naturally fluctuate across different phases of the menstrual cycle, but most mainstream wellness apps provide generic, one-size-fits-all advice. This lack of personalization can leave many women feeling unsupported, frustrated, or unable to achieve their health goals.
 
-**Why it matters:** Addressing these cyclical changes can help improve energy, reduce discomfort, support mental well-being, and enhance fitness results.
+Most wellness apps offer generic recommendations, ignoring the natural hormonal fluctuations that affect women’s nutritional and fitness needs throughout their menstrual cycle. This often leads to frustration, low motivation, and poor adherence.
 
-**How our app + API solve it:** CycleSyncAI bridges this gap by integrating Apple HealthKit menstrual cycle data with Perplexity’s Sonar Pro LLM to generate adaptive, expert-informed diet and workout recommendations — plus a daily grocery list to make following the plan easy. The result is a dynamic, cycle-aware wellness assistant that delivers timely, supportive, and motivating suggestions tailored to the user’s unique profile.
+CycleSyncAI fills this gap by providing timely, personalized, and culturally sensitive suggestions, empowering users to follow a wellness plan that evolves with their body and preferences.
 
 ---
 
 ## Features
-- Personalized diet and workout suggestions based on menstrual cycle phase and user profile.
-- Optional input fields for more precise personalization (age, height, weight, medical conditions, dietary restrictions, fitness goals, activity level, meal preferences).
-- Automatically generates a grocery list for the day based on the personalized diet plan, making it easy to shop and prepare meals.
-- Seamless integration with Apple HealthKit to automatically detect the user’s menstrual cycle phase.
-- Smooth, modern UI with gradient themes and soft animations.
-- Uses Perplexity’s Sonar Pro API to generate AI-driven, expert-informed plans with motivational and supportive feedback.
+
+- Personalized, phase-specific diet and workout plans using LLMs - for a single day or a custom date range  
+- Customized grocery lists aligned with each day’s meals, consolidated for weekly planning  
+- Adherence-aware tracking system: Users mark completed tasks, and future plans adapt based on tracker insights  
+- Motivational and supportive messages integrated into plan delivery  
+- Smart notifications for hydration, menstrual phase changes, and task follow-ups  
+- “Curated For You” page powered by Qloo, surfacing food and wellness suggestions tailored to the user’s taste and behavior  
+- User profile system that stores and updates personal and health-related information  
+- History & Progress View: view previous plans, track consistency, and celebrate progress  
+- Clean and engaging UI with gradient backgrounds, custom cards, and modern UX elements
 
 ---
 
 ## Positive Impact
-This app empowers women to better align their nutrition and workouts with their body’s natural hormonal cycles, potentially improving energy levels, fitness outcomes, and overall well-being. By offering cycle-aware health suggestions, it promotes more mindful, personalized self-care, supports healthier body image, reduces decision fatigue by providing grocery lists aligned with the daily diet plan, and encourages positive motivation to eat well and stay active — including kind, supportive messages delivered directly in the app.
+
+CycleSyncAI empowers women to take charge of their wellness in a personalized, inclusive, and culturally intelligent way.  
+It promotes:
+- Smarter food and workout decisions  
+- Better adherence through feedback and tracking  
+- Culturally relevant wellness engagement using Qloo  
+- Positive body awareness and mental well-being  
+- Reduced decision fatigue with ready-to-use plans and grocery lists
 
 ---
 
 ## Motivation
-I wanted a tailored regime for myself and couldn’t find it all in one place — hence the idea for this app. Women’s fitness and nutrition needs fluctuate across their menstrual cycle, but most mainstream wellness apps ignore this. CycleSyncAI was built to fill this gap by providing evidence-informed, personalized recommendations for each phase.
+
+I created CycleSyncAI to address a personal need for more meaningful, science-based, and personalized wellness planning - something that adapts to both biology and behavior. With Qloo’s Taste AI, the app now goes a step further by embedding cultural context into wellness, recognizing that personalization is not just about health data, but about what resonates with who we are.
+
+---
+
+## Technologies Used
+
+**Languages:** Swift, Python  
+**Frameworks:** UIKit, HealthKit, UserNotifications  
+**Platforms:** iOS, Xcode  
+**APIs:** Perplexity Sonar Pro API, Qloo Taste AI API  
+**Storage:** UserDefaults (local), WKWebView (HTML rendering)  
+**Version Control:** Git, GitHub
 
 ---
 
 ## Repository Structure
-- `CycleSyncAI.xcodeproj` — Xcode project file.
-- `CycleSyncAI/` — Main app source code.
-   - `EatPlanViewController.swift` — Generates and displays personalized diet plan; handles meal preference input; provides daily grocery list.
-   - `WorkoutPlanViewController.swift` — Generates and displays personalized workout plan.
-   - `HomepageViewController.swift` — Main navigation screen; connects to User Profile, Diet Plan, and Workout Plan pages; includes initial tagline shown on app start.
-   - `UserProfileViewController.swift` — Handles user profile input and saves data locally.
-   - `HealthManager.swift` — Interfaces with Apple HealthKit; provides menstrual cycle data for LLM prompts.
-   - `UserProfile.swift` — Contains user profile data; feeds profile details into LLM prompts.
-- `Main.storyboard` — App’s UI layout and navigation.
-- `Assets.xcassets` — Images and app icon set.
-- `Info.plist` — App configuration and permissions.
+
+- `CycleSyncAI.xcodeproj` — Xcode project file  
+- `CycleSyncAI/` — Main app source code  
+- `EatPlanViewController.swift` — Diet plan generator, grocery list builder  
+- `WorkoutPlanViewController.swift` — Workout plan generator  
+- `CuratedForYouViewController.swift` — Qloo-powered Taste AI interface  
+- `PlanDetailViewController.swift` — Tracks completion for each component of a saved plan  
+- `UserProfileViewController.swift` — Manages user inputs  
+- `TrackerManager.swift` — Stores and analyzes adherence data  
+- `HealthManager.swift` — Interfaces with HealthKit for menstrual data  
+- `Main.storyboard` — UI layout and navigation  
+- `Assets.xcassets` — Image and icon assets  
+- `Info.plist` — App configuration and HealthKit permissions
 
 ---
 
 ## Setup Instructions
-1. Clone this repository.
-2. Open the project in Xcode.
-3. Ensure you have access to Apple HealthKit on your test device or simulator.
-4. Build and run the app on an iOS device (recommended for HealthKit integration).
-5. Set up any necessary API keys or tokens for accessing Perplexity’s Sonar Pro API.
+
+1. Clone the repository  
+2. Open `CycleSyncAI.xcodeproj` in Xcode  
+3. Set up API keys for:  
+   - Perplexity Sonar Pro  
+   - Qloo Taste AI™  
+4. Build and run the app on an iOS device (HealthKit access required)  
+5. Navigate to User Profile to input initial details before generating plans
 
 ---
 
 ## Perplexity API Usage
-The app integrates with Perplexity’s Sonar Pro API by:
-- Sending structured prompts containing menstrual cycle phase, age, weight, height, medical conditions, dietary restrictions, fitness goal, activity level, and meal preferences.
-- Receiving AI-generated personalized diet and workout plans, a daily grocery list, plus motivational and supportive feedback.
-- Parsing and presenting the results in a clean, user-friendly format.
+
+- Sends structured prompts combining cycle phase, goals, restrictions, and preferences  
+- Receives HTML-formatted personalized diet/workout plans and motivational feedback  
+- Parses and displays output using WKWebView  
+- Supports both single-day and multi-day planning
+
+---
+
+## Qloo API Usage
+
+- Queries Taste AI with user context to fetch culturally relevant food and wellness suggestions  
+- Powers the “Curated For You” section  
+- Adapts to user tastes and behavior to improve over time
 
 ---
 
 ## Demo Video
-See demo video in the Devpost submission.
 
-**Note:** The LLM takes approximately 30 seconds to 1 minute to generate each diet or workout plan. To stay within the 3-minute video time limit, we have cut out the waiting periods in the demo video while waiting for the API responses.
+A 3-minute video demonstrating the app’s main features and Qloo integration is available in the Devpost submission.
 
----
-
-## Testing Instructions
-- The app runs on iOS devices with HealthKit permissions.
-- If needed, provide demo login credentials or additional setup instructions here.
+**Note:** API response delays have been edited out in the video for smoother viewing. Typical plan generation time ranges from 30 seconds to 1 minute.
 
 ---
 
-## Repository Access
-This is a public repository, created for the purpose of the Qloo hackathon.
+## What’s Next
+
+- Add a chatbot assistant so users can ask follow-up questions like:  
+  - “Can you give me the recipe for this meal?”  
+  - “Why was this workout recommended?”  
+  - “Can you suggest something similar but vegan?”  
+- Expand Qloo integration to dynamically respond to tracker data and seasonal/taste changes  
+- Release on Android  
+- Add wearable support for fitness data  
+- Enable multilingual support to reach a global audience
+
+---
+
+## License
+
+This repository is open to the public for the purpose of the Qloo Hackathon. Attribution required if reused beyond this context.
