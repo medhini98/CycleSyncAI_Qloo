@@ -13,6 +13,8 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     let gradientLayer = CAGradientLayer()
     let dietButton = UIButton(type: .system)
     let workoutButton = UIButton(type: .system)
+    let backButton = UIButton(type: .system)
+    let clearButton = UIButton(type: .system)
     let tableView = UITableView()
 
     var allPlans: [PlanModel] = []
@@ -46,19 +48,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
         allPlans = PlanHistoryManager.shared.loadPlans()
         filterPlans(for: currentFilter)
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Clear",
-            style: .plain,
-            target: self,
-            action: #selector(clearHistory)
-        )
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "Back",
-            style: .plain,
-            target: self,
-            action: #selector(goBack)
-        )
+        setupNavButtons()
     }
 
     func setupGradientBackground() {
@@ -122,6 +112,50 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
         gradient.frame = CGRect(x: 0, y: 0, width: 150, height: 40)
         gradient.cornerRadius = 12
         button.layer.insertSublayer(gradient, at: 0)
+    }
+
+    func styleButton(_ button: UIButton, colors: [UIColor]) {
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont(name: "Avenir", size: 16)
+        button.layer.cornerRadius = 12
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.2
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 6
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let gradient = CAGradientLayer()
+        gradient.colors = colors.map { $0.cgColor }
+        gradient.startPoint = CGPoint(x: 0, y: 0)
+        gradient.endPoint = CGPoint(x: 1, y: 1)
+        gradient.frame = CGRect(x: 0, y: 0, width: 80, height: 36)
+        gradient.cornerRadius = 12
+        button.layer.insertSublayer(gradient, at: 0)
+    }
+
+    func setupNavButtons() {
+        backButton.setTitle("← Back", for: .normal)
+        styleButton(backButton, colors: [
+            UIColor(red: 0.8, green: 0.757, blue: 0.969, alpha: 1),
+            UIColor(red: 0.663, green: 0.776, blue: 1.0, alpha: 1)
+        ])
+        backButton.addTarget(self, action: #selector(goBack), for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            backButton.widthAnchor.constraint(equalToConstant: 80),
+            backButton.heightAnchor.constraint(equalToConstant: 36)
+        ])
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+
+        clearButton.setTitle("Clear", for: .normal)
+        styleButton(clearButton, colors: [
+            UIColor(red: 1.0, green: 0.765, blue: 0.725, alpha: 1),
+            UIColor(red: 0.996, green: 0.698, blue: 0.863, alpha: 1)
+        ])
+        clearButton.addTarget(self, action: #selector(clearHistory), for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            clearButton.widthAnchor.constraint(equalToConstant: 80),
+            clearButton.heightAnchor.constraint(equalToConstant: 36)
+        ])
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: clearButton)
     }
 
     func setupTableView(below infoLabel: UILabel) {
