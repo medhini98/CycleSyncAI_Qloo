@@ -2,7 +2,7 @@
 
 ## Overview
 
-CycleSyncAI is a native iOS app that delivers personalized, cycle-aware diet and fitness plans, along with a ready-to-use grocery list — to help women align their wellness routines with their body’s natural rhythms.
+CycleSyncAI is a native iOS app that delivers personalized, cycle-aware diet and fitness plans, along with a ready-to-use grocery list, to help women align their wellness routines with their body’s natural rhythms.
 
 It integrates:
 - Menstrual cycle data from Apple HealthKit  
